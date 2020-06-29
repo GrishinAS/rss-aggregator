@@ -14,10 +14,6 @@ class StartApplicationTests {
   @Autowired
   private AggregatorServiceImpl aggregatorService;
 
-  @Test
-  void getAggregatedData() {
-    List aggregatedData = aggregatorService.getAggregatedData();
-    Assert.assertTrue(aggregatedData.size() > 0);
-  }
+
 
 }
