@@ -1,4 +1,4 @@
-package com.innteam.aggregator.model.dao;
+package com.tochka.aggregator.model.dao;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,10 +25,6 @@ public class RssCrudService {
     return this.repo.findById(id).orElse(null);
   }
 
-//  @Transactional
-//  public Collection<RssItem> readAll(int pages, int count) {
-//    return IterableUtils.toList(this.repo.findAll(PageRequest.of(pages, count, Sort.by(Sort.Direction.DESC, "pubDate"))));
-//  }
 
   @Transactional
   public Collection<RssItem> readAll() {

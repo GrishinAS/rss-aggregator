@@ -1,4 +1,4 @@
-package com.innteam.aggregator.model.dao;
+package com.tochka.aggregator.model.dao;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

@@ -1,4 +1,4 @@
-package com.innteam.aggregator.model.dao;
+package com.tochka.aggregator.model.dao;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

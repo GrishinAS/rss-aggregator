@@ -1,6 +1,6 @@
-package com.innteam.aggregator.service;
+package com.tochka.aggregator.service;
 
-import com.innteam.aggregator.model.ParsingRequest;
+import com.tochka.aggregator.model.ParsingRequest;
 
 import java.util.List;
 

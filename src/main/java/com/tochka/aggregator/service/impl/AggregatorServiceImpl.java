@@ -1,13 +1,13 @@
-package com.innteam.aggregator.service.impl;
+package com.tochka.aggregator.service.impl;
 
-import com.innteam.aggregator.model.ParsingRequest;
-import com.innteam.aggregator.model.dao.RssItem;
-import com.innteam.aggregator.service.AggregatorService;
 import com.sun.syndication.feed.synd.SyndEntryImpl;
 import com.sun.syndication.feed.synd.SyndFeed;
 import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
+import com.tochka.aggregator.model.ParsingRequest;
+import com.tochka.aggregator.model.dao.RssItem;
+import com.tochka.aggregator.service.AggregatorService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,9 +25,8 @@ import java.util.stream.Collectors;
 public class AggregatorServiceImpl implements AggregatorService {
 
 
-
   @Autowired
-  public AggregatorServiceImpl( ) {
+  public AggregatorServiceImpl() {
 
   }
 
