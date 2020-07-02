@@ -1,53 +1,36 @@
 package com.innteam.aggregator.rest;
 
 import com.innteam.aggregator.model.ParsingRequest;
+import com.innteam.aggregator.model.dao.RssCrudService;
+import com.innteam.aggregator.model.dao.RssItem;
 import com.innteam.aggregator.service.AggregatorService;
-import com.innteam.aggregator.utils.RssHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 public class AggregatorController {
 
     private final AggregatorService aggregatorService;
+  private final RssCrudService rssCrudService;
 
     @Autowired
-    public AggregatorController(AggregatorService aggregatorService) {
+    public AggregatorController(AggregatorService aggregatorService, RssCrudService rssCrudService) {
         this.aggregatorService = aggregatorService;
+      this.rssCrudService = rssCrudService;
     }
 
-    @PostMapping("/parseAddress") //https://news.yandex.ru/cyber_sport.rss
-    public void parseAddress(@RequestBody ParsingRequest request) {
-        try {
-            SAXParserFactory sfactory = SAXParserFactory.newInstance();
-            SAXParser saxParser = sfactory.newSAXParser();
-            XMLReader xmlparser = saxParser.getXMLReader();
-            //xmlparser.setContentHandler(new RssHandler());
-            InputStream input = new URL("https://news.yandex.ru/cyber_sport.rss").openStream();
-            saxParser.parse(input, new RssHandler());
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println();
+  @PostMapping("/parseAddress")
+  public List<Integer> parseAddress(@RequestBody ParsingRequest request) {
+    List<Integer> integers = new ArrayList<>();
+    List<RssItem> aggregatedData = aggregatorService.getAggregatedData(request);
+    for (RssItem item : aggregatedData) {
+      integers.add(rssCrudService.create(item));
+    }
+    return integers;
     }
 }
