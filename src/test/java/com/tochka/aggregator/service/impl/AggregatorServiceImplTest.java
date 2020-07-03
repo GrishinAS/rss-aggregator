@@ -1,6 +1,7 @@
-package com.innteam.aggregator.service.impl;
+package com.tochka.aggregator.service.impl;
 
-import com.innteam.aggregator.model.ParsingRequest;
+import com.tochka.aggregator.model.ParsingRequest;
+import com.tochka.aggregator.model.Rule;
 import org.junit.Assert;
 import org.junit.Before;
 
@@ -18,7 +19,7 @@ public class AggregatorServiceImplTest {
   @org.junit.Test
   public void getAggregatedData() throws IOException {
 
-    ParsingRequest request = new ParsingRequest("http://rssblog.whatisrss.com/feed/", "");
+    ParsingRequest request = new ParsingRequest("http://rssblog.whatisrss.com/feed/", new Rule());
     List aggregatedData = aggregatorService.getAggregatedData(request);
     Assert.assertTrue(aggregatedData.size() > 0);
   }

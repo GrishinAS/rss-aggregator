@@ -7,5 +7,5 @@ import lombok.Data;
 @AllArgsConstructor
 public class ParsingRequest {
   private String address;
-  private String rule;
+  private Rule rule;
 }

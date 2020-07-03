@@ -25,12 +25,12 @@ public class AggregatorController {
   }
 
   @PostMapping("/parseAddress")
-  public List<Integer> parseAddress(@RequestBody ParsingRequest request) {
-    List<Integer> integers = new ArrayList<>();
+  public String parseAddress(@RequestBody ParsingRequest request) {
+    List<Integer> createdRows = new ArrayList<>();
     List<RssItem> aggregatedData = aggregatorService.getAggregatedData(request);
     for (RssItem item : aggregatedData) {
-      integers.add(rssCrudService.create(item));
+      createdRows.add(rssCrudService.create(item));
     }
-    return integers;
+    return createdRows.size() + " rows was successfully added to DB";
   }
 }

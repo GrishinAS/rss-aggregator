@@ -1,6 +1,6 @@
-package com.innteam.aggregator;
+package com.tochka.aggregator;
 
-import com.innteam.aggregator.service.impl.AggregatorServiceImpl;
+import com.tochka.aggregator.service.impl.AggregatorServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
