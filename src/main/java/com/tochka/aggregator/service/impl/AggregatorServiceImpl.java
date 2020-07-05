@@ -13,7 +13,7 @@ import java.util.List;
 @Slf4j
 public class AggregatorServiceImpl implements AggregatorService {
 
-  //  @Autowired
+  //  @Autowired TODO
 //  @Qualifier
   private FeedParser httpFeedParser = new HTTPFeedParser();
   private FeedParser xmlFeedParser = new XMLFeedParser();

@@ -1,49 +1,54 @@
 package com.tochka.aggregator.rest;
 
 import com.tochka.aggregator.model.ParsingRequest;
-import com.tochka.aggregator.model.dao.RssCrudService;
-import com.tochka.aggregator.model.dao.RssItem;
+import com.tochka.aggregator.model.dao.feed.Feed;
+import com.tochka.aggregator.model.dao.feed.FeedCrudService;
+import com.tochka.aggregator.model.dao.items.FeedItemsCrudService;
+import com.tochka.aggregator.model.dao.items.FeedItem;
 import com.tochka.aggregator.service.AggregatorService;
-import org.quartz.SimpleTrigger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-
-import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
-import static org.quartz.TriggerBuilder.newTrigger;
 
 @RestController
 public class AggregatorController {
 
   private final AggregatorService aggregatorService;
-  private final RssCrudService rssCrudService;
+  private final FeedItemsCrudService feedItemsCrudService;
+  private final FeedCrudService feedCrudService;
 
   @Autowired
-  public AggregatorController(AggregatorService aggregatorService, RssCrudService rssCrudService) {
+  public AggregatorController(AggregatorService aggregatorService, FeedItemsCrudService feedItemsCrudService, FeedCrudService feedCrudService) {
     this.aggregatorService = aggregatorService;
-    this.rssCrudService = rssCrudService;
+    this.feedItemsCrudService = feedItemsCrudService;
+    this.feedCrudService = feedCrudService;
   }
 
   @PostMapping("/parseAddress")
   public String parseAddress(@RequestBody ParsingRequest request) {
     List<Integer> createdRows = new ArrayList<>();
-    List<RssItem> aggregatedData = aggregatorService.getAggregatedData(request);
-    for (RssItem item : aggregatedData) {
-      createdRows.add(rssCrudService.create(item));
+    List<FeedItem> aggregatedData = aggregatorService.getAggregatedData(request);
+    int feedId = feedCrudService.create(Feed.builder()
+            .address(request.getAddress())
+            .rule(request.getRule()).build());
+    for (FeedItem item : aggregatedData) {
+      item.setFeedId(feedId);
+      createdRows.add(feedItemsCrudService.create(item)); //think я тут добавляю элементы которые должны добавиться автоматом
     }
+
     return createdRows.size() + " rows was successfully added to DB";
   }
 
-  JobDetail job = newJob(RomeJob.class).withIdentity("Id1", "Rome").build();
-  SimpleTrigger trigger = newTrigger()
-    .withIdentity("mytrigger", "group1")
-    .startNow()
-    .withSchedule(simpleSchedule()
-      .withIntervalInMinutes(5)
-      .repeatForever())
-    .build();
+  @GetMapping("/feed")
+  public Collection<FeedItem> getFeed(){
+    return feedItemsCrudService.readAll();
+  }
+
+  @GetMapping("/feed")
+  public FeedItem getFeed(@PathVariable String title){
+    return feedItemsCrudService.findByTitle(title);
+  }
 }

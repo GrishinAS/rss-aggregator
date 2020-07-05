@@ -2,7 +2,7 @@ package com.tochka.aggregator.service.impl;
 
 import com.tochka.aggregator.model.ParsingRequest;
 import com.tochka.aggregator.model.Rule;
-import com.tochka.aggregator.model.dao.RssItem;
+import com.tochka.aggregator.model.dao.items.FeedItem;
 import com.tochka.aggregator.service.FeedParser;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -27,16 +27,17 @@ public class HTTPFeedParser implements FeedParser {
     try {
       // https://www.newsru.com
       Document doc = Jsoup.connect(request.getAddress()).get();
-      List<RssItem> resultFeed = new ArrayList<>();
+      List<FeedItem> resultFeed = new ArrayList<>();
       Rule rule = request.getRule();
       Elements items = doc.getElementsByClass(rule.getItem());
       for (Element item : items) {
-        RssItem rssItem = new RssItem();
-        rssItem.setDescription(fillData(rule.getDescription(), item));
-        rssItem.setTitle(fillData(rule.getTitle(), item));
-        rssItem.setLink(fillData(rule.getLink(), item));
-        rssItem.setPubDate(parseTimestamp(fillData(rule.getPubDate(), item)));
-        resultFeed.add(rssItem);
+        FeedItem feedItem = FeedItem.builder()
+                .description(fillData(rule.getDescription(), item))
+                .title(fillData(rule.getTitle(), item))
+                .link(fillData(rule.getLink(), item))
+                .pubDate(parseTimestamp(fillData(rule.getPubDate(), item)))
+                .build();
+        resultFeed.add(feedItem);
       }
       return resultFeed;
     } catch (IOException e) {
@@ -51,7 +52,7 @@ public class HTTPFeedParser implements FeedParser {
   private Timestamp parseTimestamp(String fillData) throws ParseException {
     SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yy"); //TODO add to rule
     if (fillData == null)
-      return null;
+      return new Timestamp(new Date().getTime());
     Date parsedDate = sdf.parse(fillData);
     return new Timestamp(parsedDate.getTime());
   }

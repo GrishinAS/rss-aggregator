@@ -1,38 +1,43 @@
-package com.tochka.aggregator.model.dao;
+package com.tochka.aggregator.model.dao.feed;
 
 import org.apache.commons.collections4.IterableUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.util.Collection;
 
 @Service
-public class RssCrudService {
-  private final RssRepository repo;
+public class FeedCrudService {
+  private final FeedRepository repo;
+  @PersistenceContext
+  private EntityManager entityManger;
 
   @Autowired
-  public RssCrudService(RssRepository repo) {
+  public FeedCrudService(FeedRepository repo) {
     this.repo = repo;
   }
 
-  public int create(RssItem rss) {
+  public int create(Feed rss) {
     return this.repo.save(rss).getId();
   }
 
   @Transactional
-  public RssItem read(int id) {
+  public Feed read(int id) {
     return this.repo.findById(id).orElse(null);
   }
 
 
   @Transactional
-  public Collection<RssItem> readAll() {
+  public Collection<Feed> readAll() {
     return IterableUtils.toList(this.repo.findAll());
   }
 
   @Transactional
-  public RssItem update(RssItem object) {
+  public Feed update(Feed object) {
     return this.repo.save(object);
   }
 

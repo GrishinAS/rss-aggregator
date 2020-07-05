@@ -6,7 +6,7 @@ import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
 import com.tochka.aggregator.model.ParsingRequest;
-import com.tochka.aggregator.model.dao.RssItem;
+import com.tochka.aggregator.model.dao.items.FeedItem;
 import com.tochka.aggregator.service.FeedParser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.client.RestClientException;
@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,10 +30,10 @@ public class XMLFeedParser implements FeedParser {
       SyndFeed feed = input.build(new XmlReader(feedSource));
       List<SyndEntryImpl> entries = feed.getEntries();
       return entries.stream()
-        .map(entry -> RssItem.builder()
+        .map(entry -> FeedItem.builder()
           .title(entry.getTitle())
           .description(entry.getDescription().getValue())
-          .pubDate(new Timestamp(entry.getPublishedDate().getTime()))
+          .pubDate(getPubDate(entry))
           .link(entry.getLink())
           .build())
         .collect(Collectors.toList());
@@ -43,6 +44,16 @@ public class XMLFeedParser implements FeedParser {
       log.error("Error while parsing rss xml", e);
       throw new RestClientException("Error while parsing rss xml", e);
     }
+  }
+
+  private Timestamp getPubDate(SyndEntryImpl entry) {
+    Date publishedDate = entry.getPublishedDate();
+    long dateToSave;
+    if (publishedDate != null)
+      dateToSave = publishedDate.getTime();
+    else
+      dateToSave = new Date().getTime();
+    return new Timestamp(dateToSave);
   }
 }
 
