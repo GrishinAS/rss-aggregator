@@ -2,6 +2,7 @@ package com.tochka.aggregator.service.impl;
 
 import com.tochka.aggregator.model.FeedType;
 import com.tochka.aggregator.model.ParsingRequest;
+import com.tochka.aggregator.model.dao.items.FeedItem;
 import com.tochka.aggregator.service.AggregatorService;
 import com.tochka.aggregator.service.FeedParser;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +20,7 @@ public class AggregatorServiceImpl implements AggregatorService {
   private FeedParser xmlFeedParser = new XMLFeedParser();
 
   @Override
-  public List getAggregatedData(ParsingRequest request) {
+  public List<FeedItem> getAggregatedData(ParsingRequest request) {
     if (request.getRule() != null &&
       request.getRule().getType() != null &&
       !request.getRule().getType().equals(FeedType.RSS)) {

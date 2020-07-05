@@ -9,6 +9,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 
 import java.io.IOException;
@@ -20,10 +21,11 @@ import java.util.Date;
 import java.util.List;
 
 @Slf4j
+@Service
 public class HTTPFeedParser implements FeedParser {
 
   @Override
-  public List parse(ParsingRequest request) {
+  public List<FeedItem> parse(ParsingRequest request) {
     try {
       // https://www.newsru.com
       Document doc = Jsoup.connect(request.getAddress()).get();
@@ -35,7 +37,7 @@ public class HTTPFeedParser implements FeedParser {
                 .description(fillData(rule.getDescription(), item))
                 .title(fillData(rule.getTitle(), item))
                 .link(fillData(rule.getLink(), item))
-                .pubDate(parseTimestamp(fillData(rule.getPubDate(), item)))
+                .pubDate(parseTimestamp(fillData(rule.getPubDate(), item), rule.getPubDateFormat()))
                 .build();
         resultFeed.add(feedItem);
       }
@@ -49,10 +51,10 @@ public class HTTPFeedParser implements FeedParser {
     }
   }
 
-  private Timestamp parseTimestamp(String fillData) throws ParseException {
-    SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yy"); //TODO add to rule
+  private Timestamp parseTimestamp(String fillData, String pubDateFormat) throws ParseException {
     if (fillData == null)
       return new Timestamp(new Date().getTime());
+    SimpleDateFormat sdf = new SimpleDateFormat(pubDateFormat);
     Date parsedDate = sdf.parse(fillData);
     return new Timestamp(parsedDate.getTime());
   }

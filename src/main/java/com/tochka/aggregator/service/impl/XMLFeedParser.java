@@ -9,6 +9,7 @@ import com.tochka.aggregator.model.ParsingRequest;
 import com.tochka.aggregator.model.dao.items.FeedItem;
 import com.tochka.aggregator.service.FeedParser;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
 
 import java.io.IOException;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
+@Service
 public class XMLFeedParser implements FeedParser {
 
   @Override

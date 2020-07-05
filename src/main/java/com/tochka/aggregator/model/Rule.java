@@ -15,5 +15,6 @@ public class Rule {
   String item;
   String link;
   String pubDate;
+  String pubDateFormat; //format i which date must be parsed. Example "dd-MM-yy"
   String description;
 }
