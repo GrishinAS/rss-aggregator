@@ -1,5 +1,6 @@
 package com.tochka.aggregator.model.dao.items;
 
+import com.tochka.aggregator.model.dao.feed.Feed;
 import lombok.*;
 import org.hibernate.annotations.Type;
 
@@ -12,20 +13,21 @@ import java.util.Objects;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = FeedItem.TABLE_NAME)
+@Table(name = FeedItemEntity.TABLE_NAME)
 @Entity
-public class FeedItem {
+public class FeedItemEntity {
   public static final String TABLE_NAME = "feed_items";
 
   @Id
   @GeneratedValue
   private int id;
-  @JoinColumn //TODO finish
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "feed_id")
   @Setter
-  private int feedId;
+  private Feed feed;
   @Size(min = 1)
   private String title;
-  @Size(min = 1)
+
   private String link;
   @Size(min = 1)
   @Column(name = "description", length = 65535, columnDefinition = "TEXT")
@@ -38,9 +40,9 @@ public class FeedItem {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    FeedItem feedItem = (FeedItem) o;
-    return title.equals(feedItem.title) &&
-            Objects.equals(link, feedItem.link);
+    FeedItemEntity feedItemEntity = (FeedItemEntity) o;
+    return title.equals(feedItemEntity.title) &&
+      Objects.equals(link, feedItemEntity.link);
   }
 
   @Override

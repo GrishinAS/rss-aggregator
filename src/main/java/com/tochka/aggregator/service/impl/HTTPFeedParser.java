@@ -2,7 +2,7 @@ package com.tochka.aggregator.service.impl;
 
 import com.tochka.aggregator.model.ParsingRequest;
 import com.tochka.aggregator.model.Rule;
-import com.tochka.aggregator.model.dao.items.FeedItem;
+import com.tochka.aggregator.model.dao.items.FeedItemEntity;
 import com.tochka.aggregator.service.FeedParser;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
@@ -25,21 +25,21 @@ import java.util.List;
 public class HTTPFeedParser implements FeedParser {
 
   @Override
-  public List<FeedItem> parse(ParsingRequest request) {
+  public List<FeedItemEntity> parse(ParsingRequest request) {
     try {
       // https://www.newsru.com
       Document doc = Jsoup.connect(request.getAddress()).get();
-      List<FeedItem> resultFeed = new ArrayList<>();
+      List<FeedItemEntity> resultFeed = new ArrayList<>();
       Rule rule = request.getRule();
       Elements items = doc.getElementsByClass(rule.getItem());
       for (Element item : items) {
-        FeedItem feedItem = FeedItem.builder()
+        FeedItemEntity feedItemEntity = FeedItemEntity.builder()
                 .description(fillData(rule.getDescription(), item))
                 .title(fillData(rule.getTitle(), item))
                 .link(fillData(rule.getLink(), item))
                 .pubDate(parseTimestamp(fillData(rule.getPubDate(), item), rule.getPubDateFormat()))
                 .build();
-        resultFeed.add(feedItem);
+        resultFeed.add(feedItemEntity);
       }
       return resultFeed;
     } catch (IOException e) {
@@ -52,16 +52,20 @@ public class HTTPFeedParser implements FeedParser {
   }
 
   private Timestamp parseTimestamp(String fillData, String pubDateFormat) throws ParseException {
-    if (fillData == null)
+    if (fillData == null || fillData.isEmpty())
       return new Timestamp(new Date().getTime());
+    if (pubDateFormat == null || pubDateFormat.isEmpty())
+      throw new RestClientException("Publication date format is empty");
     SimpleDateFormat sdf = new SimpleDateFormat(pubDateFormat);
     Date parsedDate = sdf.parse(fillData);
     return new Timestamp(parsedDate.getTime());
   }
 
   private String fillData(String classToFind, Element item) {
+    String text = "";
+    if (classToFind == null || classToFind.isEmpty())
+      return text;
     Elements elementsByClass = item.getElementsByClass(classToFind);
-    String text = null;
     if (elementsByClass.size() > 0) {
       text = elementsByClass.get(0).text();
     }

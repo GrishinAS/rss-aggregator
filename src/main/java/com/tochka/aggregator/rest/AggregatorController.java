@@ -1,19 +1,23 @@
 package com.tochka.aggregator.rest;
 
+import com.tochka.aggregator.model.FeedItem;
 import com.tochka.aggregator.model.ParsingRequest;
 import com.tochka.aggregator.model.dao.feed.Feed;
 import com.tochka.aggregator.model.dao.feed.FeedCrudService;
+import com.tochka.aggregator.model.dao.items.FeedItemEntity;
 import com.tochka.aggregator.model.dao.items.FeedItemsCrudService;
-import com.tochka.aggregator.model.dao.items.FeedItem;
+import com.tochka.aggregator.model.dao.rule.RuleEntity;
 import com.tochka.aggregator.service.AggregatorService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
+@Slf4j
 public class AggregatorController {
 
   private final AggregatorService aggregatorService;
@@ -27,28 +31,41 @@ public class AggregatorController {
     this.feedCrudService = feedCrudService;
   }
 
-  @PostMapping("/parseAddress")
-  public String parseAddress(@RequestBody ParsingRequest request) {
-    List<Integer> createdRows = new ArrayList<>();
-    List<FeedItem> aggregatedData = aggregatorService.getAggregatedData(request);
-    int feedId = feedCrudService.create(Feed.builder()
-            .address(request.getAddress())
-            .rule(request.getRule()).build());
-    for (FeedItem item : aggregatedData) {
-      item.setFeedId(feedId);
-      createdRows.add(feedItemsCrudService.create(item)); //think я тут добавляю элементы которые должны добавиться автоматом
-    }
+  @PostMapping("/address")
+  public String parseAddress(@RequestBody ParsingRequest request) { //http://rssblog.whatisrss.com/feed/ https://news.yandex.ru/cyber_sport.rss
+    List<FeedItemEntity> aggregatedData = aggregatorService.getAggregatedData(request); //https://www.newsru.com
 
-    return createdRows.size() + " rows was successfully added to DB";
+    Feed feed = Feed.builder()
+      .address(request.getAddress())
+      .feeds(aggregatedData)
+      .rule(RuleEntity.fromRule(request.getRule())).build();
+
+    for (FeedItemEntity item : aggregatedData) {
+      item.setFeed(feed);
+    }
+    feedCrudService.create(feed);
+
+    String message = aggregatedData.size() + " rows was successfully added to DB";
+    log.info(message);
+    return message;
   }
 
   @GetMapping("/feed")
   public Collection<FeedItem> getFeed(){
-    return feedItemsCrudService.readAll();
+    Collection<FeedItemEntity> feedItemEntities = feedItemsCrudService.readAll();
+    return feedItemEntities.stream()
+      .map(dbItem -> FeedItem.builder()
+        .description(dbItem.getDescription())
+        .title(dbItem.getTitle())
+        .link(dbItem.getLink())
+        .pubDate(dbItem.getPubDate())
+        .build())
+      .collect(Collectors.toList());
   }
 
-  @GetMapping("/feed")
+  @GetMapping("/feed/{title}")
   public FeedItem getFeed(@PathVariable String title){
-    return feedItemsCrudService.findByTitle(title);
+    FeedItemEntity foundEntity = feedItemsCrudService.findByTitle(title);
+    return FeedItem.fromEntity(foundEntity);
   }
 }

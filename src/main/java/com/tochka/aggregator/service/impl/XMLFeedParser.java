@@ -6,7 +6,7 @@ import com.sun.syndication.io.FeedException;
 import com.sun.syndication.io.SyndFeedInput;
 import com.sun.syndication.io.XmlReader;
 import com.tochka.aggregator.model.ParsingRequest;
-import com.tochka.aggregator.model.dao.items.FeedItem;
+import com.tochka.aggregator.model.dao.items.FeedItemEntity;
 import com.tochka.aggregator.service.FeedParser;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -25,14 +25,14 @@ import java.util.stream.Collectors;
 public class XMLFeedParser implements FeedParser {
 
   @Override
-  public List parse(ParsingRequest request) {
+  public List<FeedItemEntity> parse(ParsingRequest request) {
     try {
-      URL feedSource = new URL(request.getAddress()); //http://rssblog.whatisrss.com/feed/ https://news.yandex.ru/cyber_sport.rss
+      URL feedSource = new URL(request.getAddress());
       SyndFeedInput input = new SyndFeedInput();
       SyndFeed feed = input.build(new XmlReader(feedSource));
       List<SyndEntryImpl> entries = feed.getEntries();
       return entries.stream()
-        .map(entry -> FeedItem.builder()
+        .map(entry -> FeedItemEntity.builder()
           .title(entry.getTitle())
           .description(entry.getDescription().getValue())
           .pubDate(getPubDate(entry))

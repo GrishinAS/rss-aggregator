@@ -1,8 +1,9 @@
 package com.tochka.aggregator.util;
 import com.tochka.aggregator.model.ParsingRequest;
+import com.tochka.aggregator.model.Rule;
 import com.tochka.aggregator.model.dao.feed.Feed;
 import com.tochka.aggregator.model.dao.feed.FeedCrudService;
-import com.tochka.aggregator.model.dao.items.FeedItem;
+import com.tochka.aggregator.model.dao.items.FeedItemEntity;
 import com.tochka.aggregator.model.dao.items.FeedItemsCrudService;
 import com.tochka.aggregator.service.AggregatorService;
 import org.quartz.Job;
@@ -33,11 +34,11 @@ public class FeedRefresher implements Job {
 
         Collection<Feed> feeds = feedCrudService.readAll();
         for (Feed feedList : feeds) {
-            ParsingRequest parsingRequest = new ParsingRequest(feedList.getAddress(), feedList.getRule());
-            List<FeedItem> dataFromDb = feedItemsCrudService.findByFeedId(feedList.getId());
-            List<FeedItem> newParsedData = aggregatorService.getAggregatedData(parsingRequest);
+          ParsingRequest parsingRequest = new ParsingRequest(feedList.getAddress(), Rule.fromEntity(feedList.getRule()));
+          List<FeedItemEntity> dataFromDb = feedItemsCrudService.findByFeedId(feedList.getId());
+          List<FeedItemEntity> newParsedData = aggregatorService.getAggregatedData(parsingRequest);
             //feed items compare to new data
-            for (FeedItem newItem : newParsedData) {
+          for (FeedItemEntity newItem : newParsedData) {
                 if(!dataFromDb.contains(newItem)){
                     feedItemsCrudService.create(newItem);
                 }

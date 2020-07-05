@@ -22,23 +22,23 @@ public class FeedItemsCrudService {
     this.repo = repo;
   }
 
-  public int create(FeedItem rss) {
+  public int create(FeedItemEntity rss) {
     return this.repo.save(rss).getId();
   }
 
   @Transactional
-  public FeedItem read(int id) {
+  public FeedItemEntity read(int id) {
     return this.repo.findById(id).orElse(null);
   }
 
 
   @Transactional
-  public Collection<FeedItem> readAll() {
+  public Collection<FeedItemEntity> readAll() {
     return IterableUtils.toList(this.repo.findAll());
   }
 
   @Transactional
-  public FeedItem update(FeedItem object) {
+  public FeedItemEntity update(FeedItemEntity object) {
     return this.repo.save(object);
   }
 
@@ -48,15 +48,15 @@ public class FeedItemsCrudService {
   }
 
   @Transactional
-  public FeedItem findByTitle(String title) {
-    Query query = entityManger.createQuery("select f from feed_items f where title like :title", FeedItem.class);
+  public FeedItemEntity findByTitle(String title) {
+    Query query = entityManger.createQuery("select f from feed_items f where title like :title", FeedItemEntity.class);
     query.setParameter("title", title);
-    return (FeedItem) query.getSingleResult();
+    return (FeedItemEntity) query.getSingleResult();
   }
 
   @Transactional
-  public List<FeedItem> findByFeedId(int id) {
-    Query query = entityManger.createQuery("select f from feed_items f where feed_id=:id", FeedItem.class);
+  public List<FeedItemEntity> findByFeedId(int id) {
+    Query query = entityManger.createQuery("select f from feed_items f where feed_id=:id", FeedItemEntity.class);
     query.setParameter("id", id);
     return query.getResultList();
   }
