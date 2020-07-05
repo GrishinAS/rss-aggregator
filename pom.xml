@@ -15,7 +15,7 @@
 
 	<properties>
 		<java.version>1.8</java.version>
-        <hibernate.validation.verison>6.0.2.Final</hibernate.validation.verison>
+        <hibernate.validation.verison>6.1.5.Final</hibernate.validation.verison>
 	</properties>
 
 	<dependencies>
