@@ -1,4 +1,4 @@
-package com.innteam.aggregator.model;
+package com.tochka.aggregator.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class ParsingRequest {
-    private String address;
-    private String rule;
+  private String address;
+  private Rule rule;
 }
