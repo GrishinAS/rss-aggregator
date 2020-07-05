@@ -42,10 +42,10 @@
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<scope>test</scope>
-
-            <!-- Для парсинга -->
+      <scope>test</scope>
 		</dependency>
+    
+    <!-- Для парсинга -->
         <dependency>
             <groupId>rome</groupId>
             <artifactId>rome</artifactId>
