@@ -43,7 +43,6 @@ public class FeedRefresher implements Job {
     for (Feed feedList : feeds) {
       ParsingRequest parsingRequest = new ParsingRequest(feedList.getAddress(), Rule.fromEntity(feedList.getRule()));
       List<FeedItemEntity> dataFromDb = feedList.getFeeds();
-      //List<FeedItemEntity> dataFromDb = feedItemsCrudService.findByFeedId(feedList.getId());
       List<FeedItemEntity> newParsedData = aggregatorService.getAggregatedData(parsingRequest);
       //feed items compare to new data
       int newItems = 0;

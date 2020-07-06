@@ -18,7 +18,7 @@ public class FeedRefresherJobFactory implements JobFactory, ApplicationContextAw
 
   private Scheduler scheduler;
   private String GROUP_NAME = "Default";
-  private int REPEAT_TIMER = 2;
+  private int REPEAT_TIMER = 10;
   private ApplicationContext context;
 
 

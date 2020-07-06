@@ -50,7 +50,7 @@ public class FeedItemsCrudService {
   @Transactional
   public FeedItemEntity findByTitle(String title) {
     Query query = entityManger.createQuery("select f from FeedItemEntity f where title like :title", FeedItemEntity.class);
-    query.setParameter("title", title);
+    query.setParameter("title", "%" + title + "%");
     return (FeedItemEntity) query.getSingleResult();
   }
 

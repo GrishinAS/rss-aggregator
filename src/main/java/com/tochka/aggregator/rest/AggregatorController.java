@@ -63,7 +63,7 @@ public class AggregatorController {
       .collect(Collectors.toList());
   }
 
-  @GetMapping("/feed/{title}")
+  @GetMapping("/feed/item")
   public FeedItem getFeed(@RequestParam String title) {
     FeedItemEntity foundEntity = feedItemsCrudService.findByTitle(title);
     return FeedItem.fromEntity(foundEntity);
