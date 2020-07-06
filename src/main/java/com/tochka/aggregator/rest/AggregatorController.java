@@ -32,8 +32,8 @@ public class AggregatorController {
   }
 
   @PostMapping("/address")
-  public String parseAddress(@RequestBody ParsingRequest request) { //http://rssblog.whatisrss.com/feed/ https://news.yandex.ru/cyber_sport.rss
-    List<FeedItemEntity> aggregatedData = aggregatorService.getAggregatedData(request); //https://www.newsru.com
+  public String parseAddress(@RequestBody ParsingRequest request) {
+    List<FeedItemEntity> aggregatedData = aggregatorService.getAggregatedData(request);
 
     Feed feed = Feed.builder()
       .address(request.getAddress())
@@ -64,7 +64,7 @@ public class AggregatorController {
   }
 
   @GetMapping("/feed/{title}")
-  public FeedItem getFeed(@PathVariable String title){
+  public FeedItem getFeed(@RequestParam String title) {
     FeedItemEntity foundEntity = feedItemsCrudService.findByTitle(title);
     return FeedItem.fromEntity(foundEntity);
   }

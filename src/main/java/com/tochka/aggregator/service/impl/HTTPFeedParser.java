@@ -27,7 +27,6 @@ public class HTTPFeedParser implements FeedParser {
   @Override
   public List<FeedItemEntity> parse(ParsingRequest request) {
     try {
-      // https://www.newsru.com
       Document doc = Jsoup.connect(request.getAddress()).get();
       List<FeedItemEntity> resultFeed = new ArrayList<>();
       Rule rule = request.getRule();
@@ -36,7 +35,7 @@ public class HTTPFeedParser implements FeedParser {
         FeedItemEntity feedItemEntity = FeedItemEntity.builder()
                 .description(fillData(rule.getDescription(), item))
                 .title(fillData(rule.getTitle(), item))
-                .link(fillData(rule.getLink(), item))
+          .link(parseLink(rule.getLink(), item)) //
                 .pubDate(parseTimestamp(fillData(rule.getPubDate(), item), rule.getPubDateFormat()))
                 .build();
         resultFeed.add(feedItemEntity);
@@ -45,10 +44,17 @@ public class HTTPFeedParser implements FeedParser {
     } catch (IOException e) {
       log.error("Error while parsing website", e);
       throw new RestClientException("Error while parsing website", e);
-    } catch (ParseException e) {
+    } catch (ParseException | NullPointerException e) {
       log.error("Error while parsing public date", e);
       throw new RestClientException("Error while parsing public date", e);
     }
+  }
+
+  private String parseLink(String link, Element item) {
+    if (link.equals("inside")) {
+      return item.getElementsByClass("left-feed-title").get(0).getElementsByAttribute("href").get(0).attr("href");
+    } else
+      return fillData(link, item);
   }
 
   private Timestamp parseTimestamp(String fillData, String pubDateFormat) throws ParseException {

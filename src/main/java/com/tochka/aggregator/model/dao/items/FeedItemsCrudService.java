@@ -49,14 +49,14 @@ public class FeedItemsCrudService {
 
   @Transactional
   public FeedItemEntity findByTitle(String title) {
-    Query query = entityManger.createQuery("select f from feed_items f where title like :title", FeedItemEntity.class);
+    Query query = entityManger.createQuery("select f from FeedItemEntity f where title like :title", FeedItemEntity.class);
     query.setParameter("title", title);
     return (FeedItemEntity) query.getSingleResult();
   }
 
   @Transactional
   public List<FeedItemEntity> findByFeedId(int id) {
-    Query query = entityManger.createQuery("select f from feed_items f where feed_id=:id", FeedItemEntity.class);
+    Query query = entityManger.createQuery("select f from FeedItemEntity f where feed_id=:id", FeedItemEntity.class);
     query.setParameter("id", id);
     return query.getResultList();
   }
