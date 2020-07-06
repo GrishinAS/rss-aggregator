@@ -35,7 +35,7 @@ public class HTTPFeedParser implements FeedParser {
         FeedItemEntity feedItemEntity = FeedItemEntity.builder()
                 .description(fillData(rule.getDescription(), item))
                 .title(fillData(rule.getTitle(), item))
-          .link(parseLink(rule.getLink(), item)) //
+          .link(parseLink(rule.getLink(), item))
                 .pubDate(parseTimestamp(fillData(rule.getPubDate(), item), rule.getPubDateFormat()))
                 .build();
         resultFeed.add(feedItemEntity);
